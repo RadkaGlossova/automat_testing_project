@@ -23,7 +23,7 @@ export const config = {
     maxInstances: 10,
     capabilities: [{
         maxInstances: 5,
-        browserName: 'edge',
+        browserName: 'chrome',
         acceptInsecureCerts: true,
         'goog:chromeOptions': {
             args: [
