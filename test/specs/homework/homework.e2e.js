@@ -3,7 +3,7 @@ describe('Homework', async () => {
         await browser.reloadSession();
         await browser.url('/registrace');
     });
-
+    
         
     it('should show login form', async () => {
         const nameInput = $('#name');
@@ -47,7 +47,7 @@ describe('Homework', async () => {
                 const submitButton = await $('.btn-primary');
 
                 await nameInput.setValue('jajinek');
-                await emailInput.setValue('jajinek12@seznam.cz');
+                await emailInput.setValue('jajinek14@seznam.cz');
                 await passwordInput.setValue('Jajinek,123');
                 await passwConfirmInput.setValue('Jajinek,123');
                 await submitButton.click();
@@ -93,7 +93,7 @@ describe('Homework', async () => {
 
 
     }),
-    it.only('registration with invalid password', async () =>{
+    it('registration with invalid password', async () =>{
         
         const nameInput = await $('#name');
         const emailInput = await $('#email');
