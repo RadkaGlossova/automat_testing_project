@@ -97,8 +97,6 @@ describe('Homework', async () => {
         await expect(await getHeader()).toEqual('Registrace');
 
         // kontrola chybových hlášek
-        // await expect(toastTitle).toBeDisplayed();
-        // await expect(toastTitle).toHaveTextContaining('Špatně','špatně');
         await expect(getToast()).toBeDisplayed();
         await expect(getToast()).toHaveTextContaining('špatně')
         await expect(getFieldError()).toBeDisplayed();
