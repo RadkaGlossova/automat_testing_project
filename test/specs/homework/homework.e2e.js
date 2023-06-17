@@ -36,7 +36,9 @@ function getFieldError() {
 function getHeader() {
     return $('h1').getText();
 }
-
+function userNameDropdown () {
+    return $('.navbar-right').$('[data-toggle="dropdown"]');
+}
 
 
 describe('Homework', async () => {
@@ -72,7 +74,7 @@ describe('Homework', async () => {
     it('valid registration', async () => {
                 // vyplní formulář
                 await getNameField().setValue('jajinek');
-                await getEmailField().setValue('jajinek18@seznam.cz');
+                await getEmailField().setValue('jajinek31@seznam.cz');
                 await getPasswordField().setValue('Jajinek,123');
                 await getPasswConfirmField().setValue('Jajinek,123');
                 await getSubmitButton().click();
@@ -80,6 +82,7 @@ describe('Homework', async () => {
                 
                 // kontrola přesměrování z registrační stránky
                 await expect(await getHeader()).toEqual('Přihlášky');
+                await expect(await userNameDropdown()).toHaveTextContaining(['jajinek','Jajinek']);
     });
 
     it('registration with existing email', async () =>{
@@ -116,8 +119,6 @@ describe('Homework', async () => {
         await expect(await getHeader()).toEqual('Registrace');
         
         // kontrola chybových hlášek
-        //await expect(await toastTitle).toBeDisplayed();
-        //await expect(await toastTitle).toHaveTextContaining(['špatně','Špatně'])
         await expect(await getToast()).toBeDisplayed();
         await expect(await getToast()).toHaveTextContaining(['špatně','Špatně'])
         await expect(await getFieldError()).toBeDisplayed();
