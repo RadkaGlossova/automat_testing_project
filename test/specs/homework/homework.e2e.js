@@ -74,7 +74,7 @@ describe('Homework', async () => {
     it('valid registration', async () => {
                 // vyplní formulář
                 await getNameField().setValue('jajinek');
-                await getEmailField().setValue('jajinek31@seznam.cz');
+                await getEmailField().setValue('jajinek32@seznam.cz');
                 await getPasswordField().setValue('Jajinek,123');
                 await getPasswConfirmField().setValue('Jajinek,123');
                 await getSubmitButton().click();
