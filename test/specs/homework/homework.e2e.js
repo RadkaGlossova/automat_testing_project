@@ -105,7 +105,7 @@ describe('Homework', async () => {
     }),
     it('registration with invalid password', async () =>{
         
-        // vyplní špatné heslo
+        // vyplní špatné heslo (pouze číslice)
         await getNameField().setValue('jajinek');
         await getEmailField().setValue('jajinek22@seznam.cz');
         await getPasswordField().setValue('123');
