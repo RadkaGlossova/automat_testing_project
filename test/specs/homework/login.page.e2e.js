@@ -1,117 +1,4 @@
-/**
- * Lesson 9: Page Object Pattern - Exercise 4
- */
-import {username, password, expectedApplicationsPageRows} from '../../specs/fixtures.js'
-import LoginPage from '../../specs/examples/lesson-08/pages/login.page.js';
-import ApplicationsPage from '../../specs/examples/lesson-08/pages/applications.page.js';
-
-describe('Applications Page', async () => {
-
-    beforeEach(async () => {
-        await LoginPage.open();
-        await LoginPage.login(username, password)
-        await ApplicationsPage.goToApplications();
-    });
-
-    it('should list all applications', async () => {
-        const rows = await ApplicationsPage.getTableRows();
-
-        await expect(rows.length).toEqual(expectedApplicationsPageRows);
-
-        for (const row of rows) {
-            console.log(row);
-            await expect(row.name).toMatch(/^(?!\s*$).+/);
-            await expect(row.date).toMatch(/(\d{2}.\d{2}.\d{4}|\d{2}.\d{2}. - \d{2}.\d{2}.\d{4})/);
-            await expect(row.paymentType).toMatch(/(Bankovní převod|FKSP|Hotově|Složenka)/);
-            await expect(row.toPay).toMatch(/\d{1,3}(| \d{0,3}) Kč/);
-        }
-    });
-
-    it('should filter in applications', async () => {
-        const searchText = 'mar';
-
-        const unfilteredRows = await ApplicationsPage.getTableRows();
-
-        await ApplicationsPage.searchInTable(searchText);
-
-        const filteredRows = await ApplicationsPage.getTableRows();
-        await expect(filteredRows.length).toBeLessThanOrEqual(unfilteredRows.length);
-
-        for (const row of filteredRows) {
-            console.log(row);
-            await expect(row.name.toLowerCase()).toContain(searchText);
-        }
-    });
-});
-
-
-/**
- * Lesson 9: Page Object Pattern - Exercise 3
- */
-import {username, password, userFullName} from '../../../fixtures.js'
-import LoginPage from '../pages/login.page.js'
-
-describe('Login Page', async () => {
-
-    beforeEach(async () => {
-        await LoginPage.open();
-    });
-
-    it('should show login form', async () => {
-        await expect(await LoginPage.emailField).toBeDisplayed();
-        await expect(await LoginPage.emailField).toBeEnabled();
-        await expect(await LoginPage.passwordField).toBeDisplayed();
-        await expect(await LoginPage.passwordField).toBeEnabled();
-        await expect(await LoginPage.loginButton.getText()).toEqual('Přihlásit');
-    });
-
-    it('should login with valid credentials', async () => {
-
-        await LoginPage.login(username, password)
-
-        await expect(await LoginPage.getCurrentUser()).toEqual(userFullName);
-    });
-
-    it('should not login with invalid credentials', async () => {
-
-        await LoginPage.login(username, 'invalid');
-
-        // na stránce je jednak toast message
-        await expect(await LoginPage.getToastMessage()).toEqual('Některé pole obsahuje špatně zadanou hodnotu');
-
-        // ale také validační message ve formuláři
-        await expect(await LoginPage.getFieldError()).toEqual('Tyto přihlašovací údaje neodpovídají žadnému záznamu.')
-
-        // stále vidíme login formulář
-        await expect(await LoginPage.emailField).toBeDisplayed();
-        await expect(await LoginPage.passwordField).toBeDisplayed();
-        await expect(await LoginPage.loginButton).toBeDisplayed();
-    });
-
-    it('should logout', async () => {
-        await LoginPage.login(username, password);
-
-        // zkontrolujeme, že jsme přihlášeni, jinak by test byl nevalidní
-        await expect(await LoginPage.getCurrentUser()).toEqual(userFullName);
-
-        await LoginPage.logout()
-
-        await expect(await LoginPage.userNameDropdown.isDisplayed()).toBeFalsy();
-        await expect(await LoginPage.navbarRight.getText()).toEqual('Přihlásit');
-    });
-});
-
-
-
-
-
-
-
-
-
-
-
-/* const username = 'da-app.admin@czechitas.cz';
+import { username } from "../fixtures.js";
 
 async function openRegistrationPage() {
     await browser.reloadSession();
@@ -153,12 +40,10 @@ function userNameDropdown () {
     return $('.navbar-right').$('[data-toggle="dropdown"]');
 }
 
-
-describe('Homework', async () => {
+describe('Login page', async () => {
     beforeEach(async () => {
        await openRegistrationPage();
     });
-    
         
     it('should show login form', async () => {
         //kontrola registračního formuláře
@@ -187,7 +72,7 @@ describe('Homework', async () => {
     it('valid registration', async () => {
                 // vyplní formulář
                 await getNameField().setValue('jajinek');
-                await getEmailField().setValue('jajinek32@seznam.cz');
+                await getEmailField().setValue('jajinek34@seznam.cz');
                 await getPasswordField().setValue('Jajinek,123');
                 await getPasswConfirmField().setValue('Jajinek,123');
                 await getSubmitButton().click();
@@ -239,4 +124,3 @@ describe('Homework', async () => {
     });
 
 });
- */

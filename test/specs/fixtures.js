@@ -1,4 +1,5 @@
 export const username = '';
 export const password = '';
-export const userFullName = '';
-export const expectedApplicationsPageRows = 10;
+export const userFullName = 'Lišák Admin';
+export const expectedApplicationsPageRows = 30;
+export const searchText = 'mari';
