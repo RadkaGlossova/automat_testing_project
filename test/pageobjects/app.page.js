@@ -9,6 +9,8 @@ class AppPage {
     get logoutButton() {return $('#logout-link');}
     get loggedOutUser () {return $('.navbar-right').$('.nav-item');}
 
+
+
     async open() {
         await browser.url('/');
     }

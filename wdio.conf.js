@@ -42,7 +42,7 @@ export const config = {
         lesson_09: ['./test/specs/examples/lesson-09/**/*.e2e.js'],
         lesson_10: ['./test/specs/examples/lesson-10/**/*.e2e.js'],
         lesson_11: ['./test/specs/examples/lesson-11/**/*.e2e.js'],
-        my_exercise: ['./test/specs/exercise/application.e2e.js'],
+        my_exercise: ['./test/specs/exercise/orders.e2e.js'],
     },
     maxInstances: 15,
     capabilities: [{
