@@ -37,11 +37,6 @@ class ApplicationsPage extends AppPage {
     async getRows(){
         return $('.dataTable').$('tbody').$$('tr')
     }
-
-
-  /*   async getSearchInput(){
-        return $('input[type="search"]')
-    } */
     
     
 
