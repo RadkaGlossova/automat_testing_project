@@ -17,7 +17,7 @@ export const config = deepmerge(baseConfig, {
         ["html-nice", {
             outputDir: reportsDirectory,
             filename: 'report.html',
-            reportTitle: 'Czechitas Automatizované Testování',
+            reportTitle: 'Automatizované Testování',
             linkScreenshots: true,
             //to show the report in a browser when done
             showInBrowser: true,
@@ -38,7 +38,7 @@ export const config = deepmerge(baseConfig, {
         let reportAggregator = new ReportAggregator({
             outputDir: reportsDirectory,
             filename: 'report.html',
-            reportTitle: 'Czechitas Test Automation',
+            reportTitle: 'Test Automation',
             browserName : capabilities.browserName,
             collapseTests: true,
         });

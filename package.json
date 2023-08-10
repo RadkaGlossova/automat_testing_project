@@ -1,5 +1,5 @@
 {
-  "name": "czechitas-automation-wdio-8",
+  "name": "automation-test",
   "type": "module",
   "devDependencies": {
     "@babel/core": "^7.21.4",

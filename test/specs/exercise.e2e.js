@@ -1,166 +1,205 @@
-import {username, password,expectedApplicationsPageRows,searchText} from './fixtures.js'
+import {customerFirstName, customerLastName, customerUserName, customerPassword, loggedUser} from '../../test/specs/fixtures.js'
+describe('Demoqa Login Page', async () => {
 
-describe('Login Page', async () => {
-    beforeEach(async () => {
+    beforeEach (async() =>
+    { 
+        await browser.url('/');
+    });
 
-        await browser.reloadSession();
-        await browser.url('/prihlaseni');
+    it('should open login page', async () => {
+        await browser.url('/login')
+        await browser.saveScreenshot('login_page.png');
+
+        const title = await $('h2');
+        await expect (await title.getText()).toContain('Welcome,');
+
+        const customerUserNameField =  await $('input[id="userName"]');
+        await expect(customerUserNameField).toBeDisplayed();
+        await expect(customerUserNameField).toBeEnabled();
+
+        const customerPasswordField = await $('input[id="password"]');
+        await expect(customerPasswordField).toBeDisplayed();
+        await expect(customerPasswordField).toBeEnabled();
+
+        const loginButton = await $('#login');
+        await expect(loginButton).toBeClickable();
+
+        const newUserButton = await $('#newUser');
+        await expect(newUserButton).toBeClickable();
+        
+    });
+        
+       
+
+    it('should register new customer', async () => {
+        await browser.url('/register')
+        const headline = $('.main-header')
+        await expect (await headline.getText()).toEqual('Register');
+        const customerFirstNameField =  await $('input[id="firstname"]');
+        await customerFirstNameField.setValue(customerFirstName);
+        const customerLastNameField =  await $('input[id="lastname"]');
+        await customerLastNameField.setValue(customerLastName);
+        const customerUserNameField =  await $('input[id="userName"]');
+        await customerUserNameField.setValue(customerUserName);
+        const customerPasswordField = await $('input[id="password"]');
+        await customerPasswordField.setValue(customerPassword);
+        await browser.pause(1000);
+        
+        // reCaptcha picture - don´t know how to proceed :-/
+        // const registerButton =  await $('#register');
+        // await registerButton.click();
+        // await browser.pause(1000);
+        // const currentLoggedCustomer = await $('').getText();
+        // await expect (currentLoggedCustomer).toEqual(loggedCustomer);
+    });
+
+    it('should redirect to login', async () => {
+        await browser.url('/register');
+        const headline = $('.main-header');
+        await expect (await headline.getText()).toEqual('Register');
+        const redirButton = $('#gotologin');
+        await expect(redirButton).toBeClickable();
+        await redirButton.click();
+        await expect(await headline.getText()).toEqual('Login');
+    });
+
+    it('should redirect to register', async () => {
+        await browser.url('/login');
+        const headline = $('.main-header');
+        await expect (await headline.getText()).toEqual('Login');
+        const newUserButton = $('#newUser');
+        await expect(newUserButton).toBeClickable();
+        await newUserButton.click();
+        await expect(await headline.getText()).toEqual('Register');
+    });
+
+    it('should login and logout user with valid credentials', async () =>{
+        await browser.url('/login');
+
+        const headline = $('.main-header');
+        await expect (await headline.getText()).toEqual('Login');
+   
+        const title = await $('h2');
+        await expect (await title.getText()).toContain('Welcome,');
+
+        const customerUserNameField =  await $('input[id="userName"]');
+        await customerUserNameField.setValue(customerUserName);
+
+        const customerPasswordField = await $('input[id="password"]');
+        await customerPasswordField.setValue(customerPassword);
+
+        const loginButton = await $('#login');
+        await loginButton.click()     
+
+        await browser.pause(1000) //poor internet connection
+        
+        // succesfully logged user check
+        await expect (await headline.getText()).toEqual('Profile');
+
+        const currentLoggedUser = $('#userName-value')  ;
+        await expect (await currentLoggedUser.getText()).toEqual(loggedUser)
+
+        // logout
+        const logoutButton = await $('#submit');
+        await expect (loginButton).toBeClickable();
+        await logoutButton.click();
+        await expect (await headline.getText()).toEqual('Login');
+
+    });
 });
+describe('Book store', async () =>{
 
-    it('should show login page', async () => {
+    beforeEach(async () =>{
+        await browser.url('/login');
 
-        // zjištění stavu políčka email
-        const emailField = $('#email');
-        expect(emailField).toBeEnabled();
-        expect(emailField).toBeDisplayed();
+        const customerUserNameField =  await $('input[id="userName"]');
+        await customerUserNameField.setValue(customerUserName);
+        const customerPasswordField = await $('input[id="password"]');
+        await customerPasswordField.setValue(customerPassword);
+        const loginButton = await $('#login');
+        await loginButton.click() 
 
-        // zjištění stavu políčka password
-        const passwordField = $('#password');
-        expect(passwordField).toBeEnabled();
-        expect(passwordField).toBeDisabled();
+    });
+    afterEach(async () =>{
+        await browser.url('/profile');
+        const logoutButton = await $('#submit');
+        // await expect (logoutButton).toBeClickable();
+        await logoutButton.click();
+        const headline = $('.main-header')
+        await expect (await headline.getText()).toEqual('Login');
+    });
 
-        // výpis textu tlačítka na přihlášení
-        const loginButton = $('.btn-primary');
-        expect(loginButton).toBeClickable();
-        expect(await loginButton.getText()).toEqual('Přihlásit');
-
+    it('should go to a bookstore', async () =>{
         
-        // výpis atributu href odkazu a zapomenuté heslo
-        const link = $('form').$('a').getAttribute('href');
-        console.log('Forgot password? link: ' + await link);
+        //go to the store
+        const goToStoreButton = $('#gotoStore');
+        await expect (goToStoreButton).toBeClickable();
+        await goToStoreButton.click();
+        await browser.pause(1000) //  poor internet connection     
+        const headline = $('.main-header')
+        await expect (await headline.getText()).toEqual('Book Store');
        
-        // kontrola - nelze přihlásit bez vyplnění formuláře
-        await loginButton.click();
-        const title = await $('h1');
-        expect(await title.getText()).toEqual('Přihlášení');
+
     });
+    it.only('should filter list of books', async ()=>{
+        // go to store
+        const goToStoreButton = $('#gotoStore');
+        await browser.pause(1000); //poor internent connection
+        await expect (goToStoreButton).toBeClickable();
+        await goToStoreButton.click();
 
-        it('should not login - incorrect password', async () => {
-            const emailField = $('#email');
-            const passwordField = $('#password');
-            const loginButton = $('.btn-primary');
 
-        // přihlášení - správný email, špatné heslo
-        await emailField.setValue(username);
-        await passwordField.setValue('123');
-        await loginButton.click();  
-
-        const title = await $('h1').getText();
-        const errorMessage = await $('.toast-message').getText();
+        // filter
+        const searchField = await $('input[id="searchBox"]');
+        expect (searchField).toBeDisplayed;
+        expect (searchField).toBeEnabled;
+        const rowsPerPage = $('[aria-label="rows per page"');
+        await rowsPerPage.selectByVisibleText('5 rows');
        
-        expect(await errorMessage.toLowerCase()).toHaveTextContaining(['špatně','špatné']);
-        expect(title).toEqual('Přihlášení');
-
-        // odkaz na zapomenuté heslo
-        const forgottenPasswButton = $('.btn-link');
-        expect (forgottenPasswButton).toBeClickable();
-        await forgottenPasswButton.click();
-        expect (await $('h1').getText()).toMatch('Zapomenuté heslo');
-
-    });
-
-    it('should login', async () => {
-        // přihlášení - správné údaje
-        const emailField = $('#email');
-        const passwordField = $('#password');
-        const loginButton = $('.btn-primary');
-
-        await emailField.setValue(username);
-        await passwordField.setValue(password);
-        await loginButton.click();
-
-        // Vypiš jméno přihlášeného uživatele
-        const currentUser = $('.navbar-right').$('strong');
-        expect(await currentUser.getText()).toHaveTextContaining(['Admin','Lišák']);
-        console.log(await currentUser);
-
-    });
-    it('should logout', async () => {
-        // přihlášení
-    const emailField = $('#email');
-    const passwordField = $('#password');
-    const loginButton = $('.btn-primary');
-
-    await emailField.setValue(username);
-    await passwordField.setValue(password);
-    await loginButton.click();
+        // unfiltered list
+        const table = await $('.rt-table').$('.rt-tbody');
+        const unfilteredbookRowsCount = await table.$$('[role="row"]').length;
         
-         //odhlášení
-     await $('.dropdown-toggle').click(); 
-     await $('#logout-link').click();
-         const logoutUser = $('.navbar-right').$('.nav-item');
-         expect(await logoutUser.getText()).toEqual('Přihlásit')
-         console.log(await logoutUser.getText());   
- });
 
-});
-    
-describe('Applications Page', async () => {
-    beforeEach( async () => {
+        //rows in table        
+        await expect (unfilteredbookRowsCount).toEqual(5);
+        console.log(await rowsPerPage.getText('option:checked'));
+        console.log('počet radku - knihy: '+  unfilteredbookRowsCount);
         
-        await browser.reloadSession();
-        await browser.url('/prihlaseni');
-          
-        //přihlášení
-        const emailField = $('#email');
-        const passwordField = $('#password');
-        const loginButton = $('.btn-primary');
-
-        await emailField.setValue(username);
-        await passwordField.setValue(password);
-        await loginButton.click();
-
-
-    });
-
-        it('should show table', async () => {
-       
-        // přechod na stránku s kurzy
-        await $('=Přihlášky').click();
-        await browser.pause(1000);
-
-        // kontrola nadpisu stránky
-        expect (await $('h1').getText()).toMatch('Přihlášky');
-
-        // výpis přihlášených kurzů
-        const rows = await $('.dataTable').$('tbody').$$('tr');
-        expect (rows.length).toEqual(expectedApplicationsPageRows)
-
-        for (const row of rows){
-            const cols = await row.$$('td');
-                 expect(cols[0]).toHaveText(/[a-zA-Z]{3,}/);
-                 expect(cols[1]).toHaveText(/(Python|JavaScript|Automatizované testování)/);
-                 expect(cols[2]).toHaveText(/(\d{2}.\d{2}.\d{4}|\d{2}.\d{2}. - \d{2}.\d{2}.\d{4})/);
-                 expect(cols[3]).toHaveText(/\d{1,3}(| \d{0,3}) Kč/);;
-    }
-  
-    });
-
-    it('should filter the table', async () => {
-      
-        // přechod na stránku s kurzy
-        await $('=Přihlášky').click();
-        await browser.pause(1000);
+        //rows in table changed 
+        await rowsPerPage.selectByVisibleText('5 rows');
+        await browser.pause(500);
+        await expect (await unfilteredbookRowsCount).toEqual(5);
+        console.log(await rowsPerPage.getText('option:checked'));
+        console.log('počet radku - knihy: '+  unfilteredbookRowsCount);
         
-        // počet řádků
-        const rows = await $('.dataTable').$('tbody').$$('tr');
-      
-        // Filtrování tabulky
-        await $('input[type="search"]').setValue(searchText);
+        
+        // filtered list
+        const searchText = 'lea'
+        await searchField.setValue(searchText);
         await browser.pause(1000);
-        await $('#DataTables_Table_0_processing').waitForDisplayed({ reverse: true });
+        const filteredBookRows = await table.$$('[role="row"]');
 
-        const filteredRows = await $('.dataTable').$('tbody').$$('tr')
 
-        // kontrola, že je vyfiltrováno méně řádků než před filtrováním
-        expect (filteredRows.length).toBeLessThan(rows.length);
 
-        // kontrola, že zobrazuje pouze řádky s filtrovanou frází
-        for (const filteredRow of filteredRows) {
-            const cols = await filteredRow.$$('td');
-            expect(cols[0]).toHaveTextContaining(searchText);
+        const filteredbookRowsCount = await table.$$('[role="row"]').length;
+        console.log('počet filtrovaných knih: ' + filteredbookRowsCount);
+        await expect(filteredbookRowsCount).toBeLessThanOrEqual(unfilteredbookRowsCount);
+        
+        
+
+        for (const row of filteredBookRows){
+            //select rows with text
+
+            //get title of filtered book
+            const cols = await row.$$('[role="gridcell"]');
+            console.log(await cols[1].getText());
+            //await expect(cols[1]).toHaveTextContaining(searchText, { ignoreCase: true });
         }
-     });
 
-      
+
+
+    });
+
+
 });
